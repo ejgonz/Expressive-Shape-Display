@@ -1,0 +1,26 @@
+# Slave: [ID]
+#
+# [CMD1], [PIN], [VAL]
+# [CMD2], [PIN], [VAL]
+#  ...
+#
+# This file contains a template (above) for formatting slave parameters
+# White space and # lines are ignored in all files.
+#
+# The first line must contain the Slave ID as shown above, with “Slave: “ 
+# preceding it. The following lines can be in any order and consist of three
+# element comma separated lists of command, pin, and value. 
+#
+# Command list:
+#
+# Kp		set proportional gain
+# Ki		set integral gain
+# Kd		set derivative gain
+# LS		set lowering speed for a pin
+# Disable	disable a pin
+#
+# Note:
+# - Values should be integers between 0 and 255 (likely much lower for gains)
+# - A value for disable is required just so that file reading is 
+#   standardized. This value can be anything between 0-255.
+# - ID should be the desired slave ID number (integer).

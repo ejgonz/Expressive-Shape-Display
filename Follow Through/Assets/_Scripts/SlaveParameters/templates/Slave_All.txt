@@ -1,0 +1,11 @@
+Slave: 255
+
+Disable, 0, 0
+Disable, 1, 0
+Disable, 2, 0
+Disable, 3, 0
+Disable, 4, 0
+Disable, 5, 0
+
+# Command, pin, value
+# Keep all values <= 255

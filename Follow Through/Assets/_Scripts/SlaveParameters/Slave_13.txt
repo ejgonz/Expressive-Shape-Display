@@ -1,0 +1,7 @@
+Slave: 13
+
+Disable, 5, 0
+
+
+# Command, pin, value
+# Keep all values <= 255
