@@ -1,3 +1,7 @@
+/* 	CUSTOM EDITS LOG
+ * 	ejg		7/18/17		added ref points to ignoreRaycast Layer
+ */
+
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -465,6 +469,13 @@ public class JellyMesh : MonoBehaviour
 						Vector3 referencePointPosition = referencePoint.transform.position;
 						Vector3 centralPointPosition = m_Transform.position;
 						referencePoint.transform.position = centralPointPosition + (Quaternion.Euler(meshAngle) * (referencePointPosition - centralPointPosition));
+					}
+
+					// ADDING 7/18/17 ejg
+					referencePoint.GameObject.layer = 2; 	// add to ignore raycast layer
+					if (transform.InverseTransformPoint (referencePoint.transform.position).y < 0) {
+						//referencePoint.GameObject.tag = "Attach";
+						referencePoint.GameObject.AddComponent<AttachFixedObject> ();
 					}
 				}
 

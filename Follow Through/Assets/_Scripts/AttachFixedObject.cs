@@ -18,7 +18,7 @@ public class AttachFixedObject : MonoBehaviour {
     
     // shapeRenderer is the parent object to which this obj will be fixed to
     ShapeCast shapeRenderer;
-    public GameObject renderingPlane;
+	public GameObject renderingPlane; 
 	public float xOffset = 0.0f;
 	public float yOffset = 0.0f;
 	public float zOffset = 0.0f;
@@ -27,6 +27,7 @@ public class AttachFixedObject : MonoBehaviour {
     public Vector3 offset;
     
 	void Start () {
+		if (renderingPlane == null) renderingPlane = GameObject.Find("RenderingPlane");
         shapeRenderer = renderingPlane.GetComponent<ShapeCast>(); 
         this.transform.parent = shapeRenderer.transform;
 
