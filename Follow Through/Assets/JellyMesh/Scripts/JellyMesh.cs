@@ -475,7 +475,7 @@ public class JellyMesh : MonoBehaviour
 					referencePoint.GameObject.layer = 2; 	// add to ignore raycast layer
 					if (transform.InverseTransformPoint (referencePoint.transform.position).y < 0) {
 						//referencePoint.GameObject.tag = "Attach";
-						referencePoint.GameObject.AddComponent<AttachFixedObject> ();
+						//referencePoint.GameObject.AddComponent<AttachFixedObject> ();
 					}
 				}
 

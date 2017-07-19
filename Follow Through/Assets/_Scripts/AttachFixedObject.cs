@@ -25,6 +25,8 @@ public class AttachFixedObject : MonoBehaviour {
 
     // the position offset pos relative to the parent
     public Vector3 offset;
+
+    public bool ManuallyPosition = true;
     
 	void Start () {
 		if (renderingPlane == null) renderingPlane = GameObject.Find("RenderingPlane");
@@ -32,10 +34,15 @@ public class AttachFixedObject : MonoBehaviour {
         this.transform.parent = shapeRenderer.transform;
 
         // define offset relative to shape display dimensions
-		offset = new Vector3 (shapeRenderer.totalWidth/2+xOffset, shapeRenderer.initialY+yOffset, -shapeRenderer.totalHeight / 2 - shapeRenderer.pinSpacing + zOffset);
+        if (ManuallyPosition) {
+		    offset = new Vector3 (-this.transform.position.x, -this.transform.position.y, -this.transform.position.z);
+        } else {
+            offset = new Vector3 (shapeRenderer.totalWidth/2+xOffset, shapeRenderer.initialY+yOffset, -shapeRenderer.totalHeight / 2 - shapeRenderer.pinSpacing + zOffset);
+        }
 	}
 	
 	void Update () {
+        //offset = new Vector3 (shapeRenderer.totalWidth/2+xOffset, shapeRenderer.initialY+yOffset, -shapeRenderer.totalHeight / 2 - shapeRenderer.pinSpacing + zOffset);
         this.transform.position = shapeRenderer.transform.position - offset;
 	}
 }
