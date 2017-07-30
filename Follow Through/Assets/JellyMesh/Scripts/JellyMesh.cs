@@ -1933,6 +1933,9 @@ public class JellyMesh : MonoBehaviour
 					
 					if(referencePoint.Body3D != null)
 					{
+                        // EJG added to update drag when joints are updated
+                        referencePoint.GameObject.GetComponent<Rigidbody>().drag = m_Drag;
+                        referencePoint.GameObject.GetComponent<Rigidbody>().angularDrag = m_AngularDrag;
 						SpringJoint[] joints = referencePoint.Body3D.gameObject.GetComponents<SpringJoint>();
 
 						if(joints != null)
@@ -2162,6 +2165,8 @@ public class JellyMesh : MonoBehaviour
 			// Apply our rigid body movements to the rendered mesh
 			UpdateMesh();
 			m_FirstUpdate = false;
+
+            UpdateJoints(); // EJG added joint update in each loop 7/30/17
 		}
 	}
 

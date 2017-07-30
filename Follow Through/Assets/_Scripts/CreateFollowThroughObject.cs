@@ -25,10 +25,9 @@ public class CreateFollowThroughObject : MonoBehaviour {
 	public int jellyStiffness = 100;
 	public float jellyDamping = 2.0f;
 	public float jellyMass = 10f;
+    public float jellyDrag = 6f;
 
 	public float squashIntensity = 60f;
-
-	public Quaternion topCornerRotation; 
 
 	// Private Variables
 	private GameObject leader;		// Should be kinematic
@@ -41,53 +40,59 @@ public class CreateFollowThroughObject : MonoBehaviour {
 	void Start () {
 		leader = gameObject;
 
-		// Create object
-		if (m_Form == Form.Sphere) {
-			follower = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-		} else {
-			follower = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		}
-		follower.name = "Follower";
-		follower.GetComponent<MeshRenderer> ().material = material;
+        if (!useJellyMesh) {
+		    // Create object
+		    if (m_Form == Form.Sphere) {
+			    follower = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		    } else {
+			    follower = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		    }
+		    follower.name = "Follower";
+		    follower.GetComponent<MeshRenderer> ().material = material;
 
-		// Set as rigid body
-		follower.AddComponent<Rigidbody> ();
-		follower.GetComponent<Rigidbody> ().mass = bodyMass;
-		follower.GetComponent<Rigidbody> ().drag = bodyDrag;
-		follower.GetComponent<Rigidbody> ().useGravity = false;
-		follower.GetComponent<Rigidbody> ().constraints = (RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ);
+		    // Set as rigid body
+		    follower.AddComponent<Rigidbody> ();
+		    follower.GetComponent<Rigidbody> ().mass = bodyMass;
+		    follower.GetComponent<Rigidbody> ().drag = bodyDrag;
+		    follower.GetComponent<Rigidbody> ().useGravity = false;
+		    follower.GetComponent<Rigidbody> ().constraints = (RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ);
 
-		// Position over parent object
-		follower.transform.position = leader.transform.position;
-		follower.transform.localScale = leader.transform.localScale;
+		    // Position over parent object
+		    follower.transform.position = leader.transform.position;
+		    follower.transform.localScale = leader.transform.localScale;
 
-		// Create 8 springs, attach to each corner and center
-		for (float x = -1f; x <= 1f; x = x + 2) {
-			for (float y = -1f; y <= 1f; y = y + 2) {
-				for (float z = -1f; z <= 1f; z = z + 2) {
-					SpringJoint sp = follower.AddComponent<SpringJoint> ();
-					sp.connectedBody = leader.GetComponent<Rigidbody> ();
-					sp.autoConfigureConnectedAnchor = false;
-					sp.anchor = new Vector3(spScale*x,spScale*y,spScale*z);
-					sp.connectedAnchor = new Vector3(spScale*x,spScale*y,spScale*z);
-					sp.spring = springStiffness;
-					sp.damper = springDamper;
-					sp.tolerance = 0.006f;
-				}
+		    // Create 8 springs, attach to each corner and center
+		    for (float x = -1f; x <= 1f; x = x + 2) {
+			    for (float y = -1f; y <= 1f; y = y + 2) {
+				    for (float z = -1f; z <= 1f; z = z + 2) {
+					    SpringJoint sp = follower.AddComponent<SpringJoint> ();
+					    sp.connectedBody = leader.GetComponent<Rigidbody> ();
+					    sp.autoConfigureConnectedAnchor = false;
+					    sp.anchor = new Vector3(spScale*x,spScale*y,spScale*z);
+					    sp.connectedAnchor = new Vector3(spScale*x,spScale*y,spScale*z);
+					    sp.spring = springStiffness;
+					    sp.damper = springDamper;
+					    sp.tolerance = 0.006f;
+				    }
+			    }
+		    }
+		    SpringJoint sp_center = follower.AddComponent<SpringJoint> ();
+		    sp_center.connectedBody = leader.GetComponent<Rigidbody> ();
+		    sp_center.autoConfigureConnectedAnchor = false;
+		    sp_center.anchor = new Vector3(0,0,0);
+		    sp_center.connectedAnchor = new Vector3(0,0,0);
+		    sp_center.spring = springStiffness;
+		    sp_center.spring = springDamper;
+
+            // Add Squash & Stretch
+			if (squashAndStretch) {
+				follower.AddComponent<SquashAndStretch> ();
 			}
-		}
-		SpringJoint sp_center = follower.AddComponent<SpringJoint> ();
-		sp_center.connectedBody = leader.GetComponent<Rigidbody> ();
-		sp_center.autoConfigureConnectedAnchor = false;
-		sp_center.anchor = new Vector3(0,0,0);
-		sp_center.connectedAnchor = new Vector3(0,0,0);
-		sp_center.spring = springStiffness;
-		sp_center.spring = springDamper;
 
-		if (useJellyMesh) {
+        } else {
 			// Remove renderer of follower
-			follower.GetComponent<MeshRenderer>().enabled = false;
-			follower.GetComponent<Collider> ().enabled = false;
+			//follower.GetComponent<MeshRenderer>().enabled = false;
+			//follower.GetComponent<Collider> ().enabled = false;
 
 			// Create jelly object
 			if (m_Form == Form.Sphere) {
@@ -99,16 +104,16 @@ public class CreateFollowThroughObject : MonoBehaviour {
 			jelly.GetComponent<Collider> ().enabled = false;
 
 			// Position over follower
-			jelly.transform.position = follower.transform.position;
+			jelly.transform.position = leader.transform.position;
 
 			// Add jelly mesh
 			jelly.AddComponent<JellyMesh> ();
 			JellyMesh jm = jelly.GetComponent<JellyMesh> ();
 			jm.m_Style = JellyMesh.PhysicsStyle.Cube;
 			jm.m_UseGravity = false;
-			jm.m_MeshScale = follower.transform.localScale;
+			jm.m_MeshScale = leader.transform.localScale;
 
-			jm.m_Drag = 6f;
+			jm.m_Drag = jellyDrag;
 			jm.m_AngularDrag = 1;
 			jm.m_LockRotationX = true;
 			jm.m_LockRotationZ = true;
@@ -141,42 +146,56 @@ public class CreateFollowThroughObject : MonoBehaviour {
 				}
 			}
 
-		} else {
-			// Add Squash & Stretch
-			if (squashAndStretch) {
-				follower.AddComponent<SquashAndStretch> ();
-			}
-		}
+		} 
 
 		// Initialize impulse
 		impulse = new Vector3(0,50,0);
 	}
 
 	void FixedUpdate () {
-		// Update spring stiffness, dampening and mass
-		follower.GetComponent<Rigidbody> ().mass = bodyMass;
-		follower.GetComponent<Rigidbody> ().drag = bodyDrag;
 
-		// Rotate top Jelly Corners
+		
 		if (useJellyMesh) {
+            // Rotate top Jelly Corners, if rotated
 			RotateTopCorners ();
-		}
+            
+            // Update jelly characteristics
+            jelly.GetComponent<JellyMesh> ().m_Stiffness = jellyStiffness;	// 500
+			jelly.GetComponent<JellyMesh> ().m_DampingRatio = jellyDamping;	// 10
+			jelly.GetComponent<JellyMesh> ().m_Mass = jellyMass;			// 1
+            jelly.GetComponent<JellyMesh> ().m_Drag = jellyDrag;
 
-		// Squash and Stretch
-		if (squashAndStretch) {
-			follower.GetComponent<SquashAndStretch> ().intensity = squashIntensity;
-		}
+            // Impulse top jelly corners
+            if ( Input.GetKeyDown(KeyCode.Space) )
+		    {
+		        foreach (GameObject corner in corners) {
+			        corner.GetComponent<Rigidbody>().AddForce(impulse, ForceMode.Impulse);
+		        }
+		    }
 
-		SpringJoint[] springs = follower.GetComponents<SpringJoint>();
-		foreach (SpringJoint spring in springs) {
-			spring.spring = springStiffness;
-			spring.damper = springDamper;
-		}
+		} else {
+            // Update spring stiffness, dampening and mass
+		    follower.GetComponent<Rigidbody> ().mass = bodyMass;
+		    follower.GetComponent<Rigidbody> ().drag = bodyDrag;
 
-		if ( Input.GetKeyDown(KeyCode.Space) )
-		{
-			follower.GetComponent<Rigidbody>().AddForce(impulse, ForceMode.Impulse);
-		}
+            // Squash and Stretch
+		    if (squashAndStretch) {
+			    follower.GetComponent<SquashAndStretch> ().intensity = squashIntensity;
+		    }
+
+		    SpringJoint[] springs = follower.GetComponents<SpringJoint>();
+		    foreach (SpringJoint spring in springs) {
+			    spring.spring = springStiffness;
+			    spring.damper = springDamper;
+		    }
+
+		    if ( Input.GetKeyDown(KeyCode.Space) )
+		    {
+			    follower.GetComponent<Rigidbody>().AddForce(impulse, ForceMode.Impulse);
+		    }
+        }
+
+
 	}
 
 	void RotateTopCorners() {
