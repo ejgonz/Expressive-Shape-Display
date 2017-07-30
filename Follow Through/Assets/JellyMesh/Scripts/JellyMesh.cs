@@ -63,7 +63,7 @@ public class JellyMesh : MonoBehaviour
 	public int m_VertexDensity = 10;
 
 	// Radius of the rigid body colliders (given as a % of mesh size)
-	public float m_SphereRadius = 0.25f;
+	public float m_SphereRadius = 0.20f;
 
 	// How strongly we map reference points to mesh vertices. Higher values will make the mesh vertex distortion
 	// more accurately correspond to the rigid body movement, but may cause visual artefacts, especially on
@@ -90,7 +90,7 @@ public class JellyMesh : MonoBehaviour
 	public float m_GravityScale = 1.0f;
 
     // Use Gravity (in 3D mode)
-    public bool m_UseGravity = true;
+    public bool m_UseGravity = false;
 
 	// Whether child bodies should collider with one another
 	public bool m_CollideConnected = false;
@@ -133,7 +133,7 @@ public class JellyMesh : MonoBehaviour
 	/// <summary>
 	/// Used to scale the mesh size
 	/// </summary>
-	public Vector3 m_MeshScale = Vector3.one;
+	public Vector3 m_MeshScale = Vector3.one * 0.06f;	// EJG 7/29/17 added to work around mesh creation on startup TODO: make constructor variable somehow
 
 	// Whether to use 2D or 3D rigid bodies/colliders
 	public bool m_2DMode = false;
@@ -143,7 +143,7 @@ public class JellyMesh : MonoBehaviour
 
 	// Controls whether bodies are attached to their neighboring bodies as well as to
 	// the central point
-	public bool m_AttachNeighbors = false;
+	public bool m_AttachNeighbors = true;	// EJG edited to true 7/29/17 
 	
 	// Array of attach points - used to attach child objects to this jelly mesh
 	public int m_NumAttachPoints = 0;
@@ -1084,6 +1084,7 @@ public class JellyMesh : MonoBehaviour
 			joint.connectedAnchor = point1.Body3D.transform.localPosition - point2.Body3D.transform.localPosition;
 			joint.minDistance = 0.0f;
 			joint.maxDistance = 0.0f;
+			joint.tolerance = 0.006f;
             joint.enableCollision = m_CollideConnected;
 
 			joint.spring = m_Stiffness;
