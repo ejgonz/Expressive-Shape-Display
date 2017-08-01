@@ -16,7 +16,9 @@ public class SquashAndStretch : MonoBehaviour {
 	private float xScale;
 	private float yScale;
 	private float zScale;
-	private float originalScale;
+	private float originalScaleX;
+	private float originalScaleY;
+	private float originalScaleZ;
 	private Quaternion directionTraveling;
 
 	private GameObject parentSquasher;
@@ -42,7 +44,9 @@ public class SquashAndStretch : MonoBehaviour {
 		squashee.transform.SetParent (parentSquasher.transform);
 
 		rb = GetComponent<Rigidbody>();
-		originalScale = transform.localScale.x;
+		originalScaleX = transform.localScale.x;
+		originalScaleY = transform.localScale.y;
+		originalScaleZ = transform.localScale.z;
 	}
 
 	void Update () 
@@ -71,9 +75,9 @@ public class SquashAndStretch : MonoBehaviour {
 		} else {
 			squash = (rb.velocity.magnitude / intensity);
 		}
-		xScale = ((squash / -2) + originalScale);
-		yScale = ((squash / -2) + originalScale);
-		zScale = (squash + originalScale);
+		xScale = ((squash / -2) + originalScaleX);
+		yScale = ((squash / -2) + originalScaleY);
+		zScale = (squash + originalScaleZ);
 
 		if (rb.velocity.magnitude > velocityThreshold) {
 
