@@ -53,9 +53,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UpdateMethod: 0
   OpenPortOnStart: 1
-  ComPort: 
+  ComPort: COM6
   BaudRate: 115200
   ValuesSeparator: 10
-  refreshRate: 0.002
+  refreshRate: 0.4
   renderingPlane: {fileID: 0}
-  debug: 0
+  debug: 1
